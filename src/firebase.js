@@ -10,5 +10,5 @@ const config = { /* COPY THE ACTUAL CONFIG FROM FIREBASE CONSOLE */
 	storageBucket: "shufflist.appspot.com",
 	messagingSenderId: "477154898678"
 };
-const fire = firebase.initializeApp(config);
-export default fire;
+const firebase = firebase.initializeApp(config);
+export default firebase;

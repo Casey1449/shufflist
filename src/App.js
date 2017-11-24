@@ -1,8 +1,36 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import firebase from './firebase';
 import './App.css';
 
 class App extends Component {
+	constructor(props) {
+    super(props);
+    this.state = { 
+			currentlyPlayingSong: '', 
+			nextUpSong: '',
+			songs: ''
+		}; 
+  }
+  componentWillMount(){
+    let songs = fire.database().ref();
+
+	}
+	
+	getRandomSong(){
+
+	}
+
+  addMessage(e){
+    e.preventDefault(); // <- prevent form submit from reloading the page
+		/* Send the message to Firebase */
+		messagesRef.on('child_added', snapshot => {
+      /* Update React state when message is added at Firebase Database */
+      let message = { text: snapshot.val(), id: snapshot.key };
+      this.setState({ nextUpSong: [message].concat(this.state.messages) });
+    })
+    fire.database().ref('messages').push( this.inputEl.value );
+    this.inputEl.value = ''; // <- clear the input
+  }
   render() {
     return (
       <div className="App">

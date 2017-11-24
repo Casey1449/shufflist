@@ -7,6 +7,7 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Logan's Shufflist App!</h1>
+				<h2>testing new deploy scripts</h2>
       </div>
     );
   }

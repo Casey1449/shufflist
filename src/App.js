@@ -1,45 +1,66 @@
-import React, { Component } from 'react';
-import fire from './firebase';
-import './App.css';
+import React, { Component } from "react";
+import fire from "./firebase";
+import "./App.css";
 
 class App extends Component {
 	constructor(props) {
-    super(props);
-    this.state = { 
-			currentlyPlayingSong: '', 
-			nextUpSong: '',
-			songs: ''
-		}; 
-	}
-	
-  async componentWillMount(){
-    let songs = await fire.database().ref("songs").orderByKey();
-		songs.once('value').then(snapshot => console.log(snapshot.value()));
-	}
-	
-	getRandomSong(){
-
+		super(props);
+		this.state = {
+			songsLoading: true,
+			currentSong: {
+				song: "",
+				artist: ""
+			},
+			nextUp: {
+				song: "",
+				artist: ""
+			},
+			songs: []
+		};
 	}
 
-  // addMessage(e){
-  //   e.preventDefault(); // <- prevent form submit from reloading the page
-	// 	/* Send the message to Firebase */
-	// 	messagesRef.on('child_added', snapshot => {
-  //     /* Update React state when message is added at Firebase Database */
-  //     let message = { text: snapshot.val(), id: snapshot.key };
-  //     this.setState({ nextUpSong: [message].concat(this.state.messages) });
-  //   })
-  //   fire.database().ref('messages').push( this.inputEl.value );
-  //   this.inputEl.value = ''; // <- clear the input
-  // }
-  render() {
-    return (
-      <div className="App">
-        <h1>Logan's Shufflist App!</h1>
-				<h2>testing new deploy scripts</h2>
-      </div>
-    );
-  }
+	componentWillMount() {
+		const songs = fire
+			.database()
+			.ref("songs")
+			.orderByKey();
+		songs
+			.once("value")
+			.then(snapshot => this.setState({ songs: snapshot.val() }))
+			.then(this.getRandomSong)
+			.then(() => this.setState({ songsLoading: false }));
+	}
+
+	getRandomSong = () => {
+		const songCount = this.state.songs.length - 1 || 0;
+		const randomSong = Math.floor(Math.random() * songCount);
+		this.setState({ nextUp: this.state.songs[randomSong] });
+	};
+
+	playSong = () => {
+		this.setState({ currentSong: this.state.nextUp });
+		this.getRandomSong();
+	};
+
+	render() {
+		const { nextUp, currentSong, songsLoading } = this.state;
+
+		return (
+			<div className="App">
+				{songsLoading && <p>{"Loading Logan's Repertoire..."}</p>}
+				{currentSong.song && <p>{`Now playing: ${currentSong.song}`}</p>}
+				{!songsLoading && (
+					<div>
+						<p>Next up:</p>
+						<h1>{nextUp.song}</h1>
+						<h2>{nextUp.artist}</h2>
+					</div>
+				)}
+				<button onClick={this.getRandomSong}>"No."</button>
+				<button onClick={this.playSong}>"Yes!"</button>
+			</div>
+		);
+	}
 }
 
 export default App;
